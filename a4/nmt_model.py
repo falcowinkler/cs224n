@@ -176,7 +176,7 @@ class NMT(nn.Module):
         X = self.model_embeddings.source(source_padded)
         enc_hiddens, (last_hidden, last_cell) = self.encoder(pack_padded_sequence(X, source_lengths))
         enc_hiddens, enc_hidden_lengths = pad_packed_sequence(enc_hiddens)
-        enc_hiddens = enc_hiddens.reshape(enc_hiddens.shape[1], enc_hiddens.shape[0], -1)
+        enc_hiddens = enc_hiddens.permute(1, 0, 2)
         last_hidden = torch.cat((last_hidden[0], last_hidden[1]), dim=1)
         init_decoder_hidden = self.h_projection.forward(last_hidden)
         last_cell = torch.cat((last_cell[0], last_cell[1]), dim=1)
