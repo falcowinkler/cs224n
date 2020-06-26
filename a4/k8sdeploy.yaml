@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: aca534-generative-adversarial-networks
+  name: cifar-gan
+spec:
+  template:
+    metadata:
+      name: cifar-gan
+    spec:
+      # set toleration to allow to run on gpu node
+      tolerations:
+      - key: gpu
+        operator: "Equal"
+        value: "true"
+      # set serviceAccount to allow to use gpu serviceaccount
+      serviceAccount: gpu-serviceaccount
+      containers:
+      - image: falcowinkler/cs224n-assignment-4:latest
+        name: cifar-gan
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          protocol: TCP
+
+      restartPolicy: Never
+
+  backoffLimit: 4
+  parallelism: 1

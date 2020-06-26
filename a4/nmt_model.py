@@ -316,7 +316,7 @@ class NMT(nn.Module):
         dec_state = self.decoder.forward(Ybar_t, dec_state)
         (dec_hidden, dec_cell) = dec_state
         e_t = torch.bmm(enc_hiddens_proj, dec_hidden.unsqueeze(2))
-        e_t = e_t.reshape(enc_masks.shape)
+        e_t = e_t.squeeze(2)
         ### END YOUR CODE
 
         # Set e_t to -inf where enc_masks has 1
@@ -350,7 +350,7 @@ class NMT(nn.Module):
         ###     Tanh:
         ###         https://pytorch.org/docs/stable/torch.html#torch.tanh
         alpha_t = torch.nn.functional.softmax(e_t)
-        a_t = torch.bmm(alpha_t.unsqueeze(1), enc_hiddens).squeeze()
+        a_t = torch.bmm(alpha_t.unsqueeze(1), enc_hiddens).squeeze(1)
         U_t = torch.cat((dec_hidden, a_t), dim=1)
         V_t = self.combined_output_projection.forward(U_t)
         O_t = self.dropout.forward(torch.tanh(V_t))
