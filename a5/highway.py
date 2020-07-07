@@ -13,7 +13,8 @@ class Highway(nn.Module):
 
     # Remember to delete the above 'pass' after your implementation
 
-    def __init__(self, w1_init, b1_init, w2_init, b2_init):
+    def __init__(self, w1_init=nn.init.uniform, b1_init=nn.init.uniform, w2_init=nn.init.uniform,
+                 b2_init=nn.init.uniform):
         super().__init__()
         self.w1_init = w1_init
         self.b1_init = b1_init

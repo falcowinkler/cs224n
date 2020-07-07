@@ -39,7 +39,23 @@ class ModelEmbeddings(nn.Module):
         super(ModelEmbeddings, self).__init__()
 
         ### YOUR CODE HERE for part 1h
+        self.e_char = 50
+        self.word_embed_size = word_embed_size
+        self.dropout_prob = 0.3
+        self.vocab = vocab
+        self.embedding = nn.Embedding(
+            len(vocab),
+            self.e_char,
+            padding_idx=vocab.char2id['∏']
+        )
 
+        self.cnn = CNN(e_char=self.e_char,
+                       filters=self.word_embed_size,
+                       kernel_size=5,
+                       m_word=20  # TODO what value here? (this is the highest value in which the dimensions work out)
+                       )
+        self.highway = Highway()
+        self.dropout = nn.Dropout(p=self.dropout_prob)
         ### END YOUR CODE
 
     def forward(self, input):
@@ -52,6 +68,11 @@ class ModelEmbeddings(nn.Module):
             CNN-based embeddings for each word of the sentences in the batch
         """
         ### YOUR CODE HERE for part 1h
-
+        embedded = self.embedding.forward(input)
+        max_sent_len, batch_size, samples, filters = embedded.shape
+        reshaped = embedded.view((max_sent_len * batch_size, samples, filters)).permute(0, 2, 1)
+        conv_out = self.cnn.forward(reshaped)
+        highway = self.highway.forward(conv_out.squeeze())
+        dropout = self.dropout.forward(highway)
+        return dropout.view(max_sent_len, batch_size, -1)
         ### END YOUR CODE
-
