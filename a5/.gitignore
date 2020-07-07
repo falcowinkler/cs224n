@@ -1,3 +1,7 @@
+k8sdeploy.yaml
+model.bin.optim
+vocab_tiny_q1.json
+vocab_tiny_q2.json
 en_es_data
 model.bin
 vocab.json

@@ -25,7 +25,8 @@ class Highway(nn.Module):
 
     def forward(self, x_conv_out):
         # Map convolution outputs of shape (batch_size, embedding_size) to x_highway with the same shape
-        e_word_size = x_conv_out.shape[1]
+        # for some reason (during beam search ? ) we get inputs of shape (e_word_size) (without batch dim)
+        e_word_size = x_conv_out.shape[1] if len(x_conv_out.shape) > 1 else x_conv_out.shape[0]
         w_proj = nn.Linear(e_word_size, e_word_size)
         self.w1_init(w_proj.weight)
         self.b1_init(w_proj.bias)

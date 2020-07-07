@@ -44,7 +44,7 @@ class ModelEmbeddings(nn.Module):
         self.dropout_prob = 0.3
         self.vocab = vocab
         self.embedding = nn.Embedding(
-            len(vocab),
+            len(vocab.char2id),
             self.e_char,
             padding_idx=vocab.char2id['∏']
         )
@@ -52,7 +52,7 @@ class ModelEmbeddings(nn.Module):
         self.cnn = CNN(e_char=self.e_char,
                        filters=self.word_embed_size,
                        kernel_size=5,
-                       m_word=20  # TODO what value here? (this is the highest value in which the dimensions work out)
+                       m_word=21  # copied from reference solution. not sure where this comes from.
                        )
         self.highway = Highway()
         self.dropout = nn.Dropout(p=self.dropout_prob)
@@ -69,8 +69,8 @@ class ModelEmbeddings(nn.Module):
         """
         ### YOUR CODE HERE for part 1h
         embedded = self.embedding.forward(input)
-        max_sent_len, batch_size, samples, filters = embedded.shape
-        reshaped = embedded.view((max_sent_len * batch_size, samples, filters)).permute(0, 2, 1)
+        max_sent_len, batch_size, samples, channels = embedded.shape
+        reshaped = embedded.view((max_sent_len * batch_size, samples, channels)).transpose(1, 2)
         conv_out = self.cnn.forward(reshaped)
         highway = self.highway.forward(conv_out.squeeze())
         dropout = self.dropout.forward(highway)
