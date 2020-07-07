@@ -162,8 +162,8 @@ class VocabEntry(object):
         ###         https://pytorch.org/docs/stable/tensors.html#torch.Tensor.view
         indices = self.words2charindices(sents)  # 3d tensor
         padded = pad_sents_char(indices, self.char_pad)
-        tensor = torch.tensor(padded, device=device)
-        return tensor.reshape((tensor.shape[1], tensor.shape[0], tensor.shape[2])).contiguous()
+        tensor = torch.tensor(padded, device=device, dtype=torch.long)
+        return tensor.permute(1, 0, 2).contiguous().to(device)
         ### END YOUR CODE
 
     def to_input_tensor(self, sents: List[List[str]], device: torch.device) -> torch.Tensor:

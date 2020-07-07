@@ -43,6 +43,7 @@ class ModelEmbeddings(nn.Module):
         self.word_embed_size = word_embed_size
         self.dropout_prob = 0.3
         self.vocab = vocab
+        self.max_word_len = 21  # copied from reference solution. not sure where the 21 comes from
         self.embedding = nn.Embedding(
             len(vocab.char2id),
             self.e_char,
@@ -52,9 +53,9 @@ class ModelEmbeddings(nn.Module):
         self.cnn = CNN(e_char=self.e_char,
                        filters=self.word_embed_size,
                        kernel_size=5,
-                       m_word=21  # copied from reference solution. not sure where this comes from.
+                       m_word=self.max_word_len
                        )
-        self.highway = Highway()
+        self.highway = Highway(word_embed_size)
         self.dropout = nn.Dropout(p=self.dropout_prob)
         ### END YOUR CODE
 

@@ -20,9 +20,11 @@ class CNN(nn.Module):
         self.kernel_size = kernel_size
         self.e_char = e_char
         self.m_word = m_word
+        self.cnn = nn.Conv1d(in_channels=self.e_char, out_channels=self.filters, kernel_size=self.kernel_size,
+                             padding=1)
+        self.maxpool = nn.MaxPool1d(self.m_word - self.kernel_size + 1 + 2)
 
     def forward(self, x_reshaped):
-        x_conv = nn.Conv1d(in_channels=self.e_char, out_channels=self.filters, kernel_size=self.kernel_size,
-                           padding=1).forward(x_reshaped)
-        return nn.MaxPool1d(self.m_word - self.kernel_size + 1 + 2).forward(x_conv)
+        x_conv = self.cnn.forward(x_reshaped)
+        return self.maxpool.forward(nn.ReLU().forward(x_conv))
     ### END YOUR CODE
