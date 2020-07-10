@@ -8,8 +8,6 @@ CS224N 2019-20: Homework 5
 import torch
 import torch.nn as nn
 
-from vocab import VocabEntry
-
 
 class CharDecoder(nn.Module):
     def __init__(self, hidden_size, char_embedding_size=50, target_vocab=None):
@@ -95,12 +93,11 @@ class CharDecoder(nn.Module):
         for t in range(max_length - 1):
             prediction, dec_hidden = self.forward(current_char, dec_hidden=dec_hidden)
             character_prob_dist = torch.nn.Softmax(dim=2).forward(prediction)
-            predicted_chars = character_prob_dist.argmax(dim=2)
-            output_words.append(predicted_chars)
-
-        output_words = torch.stack(output_words).permute(1, 2, 0)
+            current_char = character_prob_dist.argmax(dim=2)
+            output_words.append(current_char)
+        output_words = torch.stack(output_words, dim=0).squeeze(1).permute(1, 0)
         real_words = []
-        for row in output_words[0]:
+        for row in output_words:
             word = ""
             for id in row:
                 id = int(id)
