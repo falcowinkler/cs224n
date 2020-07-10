@@ -43,7 +43,8 @@ class ModelEmbeddings(nn.Module):
         self.word_embed_size = word_embed_size
         self.dropout_prob = 0.3
         self.vocab = vocab
-        self.max_word_len = 21  # copied from reference solution. not sure where the 21 comes from
+        # apparently 21 is an arbitrary value chosen for the sanity tests and also the greedy decoder
+        self.max_word_len = 21
         self.embedding = nn.Embedding(
             len(vocab.char2id),
             self.e_char,

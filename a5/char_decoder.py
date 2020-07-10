@@ -8,6 +8,8 @@ CS224N 2019-20: Homework 5
 import torch
 import torch.nn as nn
 
+from vocab import VocabEntry
+
 
 class CharDecoder(nn.Module):
     def __init__(self, hidden_size, char_embedding_size=50, target_vocab=None):
@@ -76,7 +78,6 @@ class CharDecoder(nn.Module):
         @returns decodedWords (List[str]): a list (of length batch_size) of strings, each of which has length <= max_length.
                               The decoded strings should NOT contain the start-of-word and end-of-word characters.
         """
-
         ### YOUR CODE HERE for part 2c
         ### TODO - Implement greedy decoding.
         ### Hints:
@@ -86,5 +87,6 @@ class CharDecoder(nn.Module):
         ###      - You may find torch.argmax or torch.argmax useful
         ###      - We use curly brackets as start-of-word and end-of-word characters. That is, use the character '{' for <START> and '}' for <END>.
         ###        Their indices are self.target_vocab.start_of_word and self.target_vocab.end_of_word, respectively.
-
+        batch_size, _ = initialStates[0].shape
+        dec_hidden = initialStates
         ### END YOUR CODE
