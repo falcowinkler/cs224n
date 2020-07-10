@@ -87,6 +87,27 @@ class CharDecoder(nn.Module):
         ###      - You may find torch.argmax or torch.argmax useful
         ###      - We use curly brackets as start-of-word and end-of-word characters. That is, use the character '{' for <START> and '}' for <END>.
         ###        Their indices are self.target_vocab.start_of_word and self.target_vocab.end_of_word, respectively.
-        batch_size, _ = initialStates[0].shape
+        _, batch_size, _ = initialStates[0].shape
         dec_hidden = initialStates
+
+        output_words = []
+        current_char = torch.tensor([[self.target_vocab.start_of_word] * batch_size], dtype=torch.long, device=device)
+        for t in range(max_length - 1):
+            prediction, dec_hidden = self.forward(current_char, dec_hidden=dec_hidden)
+            character_prob_dist = torch.nn.Softmax(dim=2).forward(prediction)
+            predicted_chars = character_prob_dist.argmax(dim=2)
+            output_words.append(predicted_chars)
+
+        output_words = torch.stack(output_words).permute(1, 2, 0)
+        real_words = []
+        for row in output_words[0]:
+            word = ""
+            for id in row:
+                id = int(id)
+                if id == self.target_vocab.end_of_word:
+                    break
+                word += self.target_vocab.id2char[id]
+            real_words.append(word)
+        return real_words
+
         ### END YOUR CODE

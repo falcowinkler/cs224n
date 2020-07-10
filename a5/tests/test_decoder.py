@@ -29,7 +29,7 @@ def mock_decoder_forward(_current_char, dec_hidden):
     for row in s_t[0]:
         # set one entry to one, so that softmax will return this value as 1 probability
         # this char id should repeatedly show up in output
-        row[4] = 1  # character code for capital "A"
+        row[4] = 1  # character code for lowercase "a" in DummyVocab
     s_t = torch.tensor(s_t, dtype=torch.float)
     return s_t, dec_hidden
 
@@ -47,4 +47,4 @@ def test_greedy_decode():
     result = decoder.decode_greedy(initialStates=initial_states, device=decoder.char_output_projection.weight.device,
                                    max_length=max_word_length)
     for decoded_word in result:
-        assert decoded_word == "A" * max_word_length
+        assert decoded_word == "a" * (max_word_length - 1)
